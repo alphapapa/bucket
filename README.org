@@ -1,0 +1,176 @@
+[[buckets.jpg]]
+
+These cats all have buckets.  Where's your bucket?
+
+=bucket= is like a clipboard manager for the shell.  Or it's like Emacs/Vim-style registers for the shell.  It makes it easy to save clips of text to named "buckets" (or a default, unnamed bucket) and access them later.
+
+** Examples
+Pour into default bucket:
+#+BEGIN_SRC sh
+$ echo "I wondered why the frisbee was getting bigger, and then it hit me" | bucket
+#+END_SRC
+
+Pour from default bucket:
+#+BEGIN_SRC sh
+$ bucket
+I wondered why the frisbee was getting bigger, and then it hit me
+#+END_SRC
+
+Pour default bucket into named bucket:
+#+BEGIN_SRC sh
+$ bucket | bucket jokes
+#+END_SRC
+
+Pour into named bucket, verbosely:
+#+BEGIN_SRC sh
+$ dmesg | grep error | bucket -v errors
+[    7.817768] EXT4-fs (sdc1): re-mounted. Opts: errors=remount-ro,user_xattr
+#+END_SRC
+
+Pour from named bucket:
+#+BEGIN_SRC sh
+$ bucket errors
+[    7.817768] EXT4-fs (sdc1): re-mounted. Opts: errors=remount-ro,user_xattr
+#+END_SRC
+
+Append to a bucket:
+#+BEGIN_SRC sh
+$ echo "A plateau is the highest form of flattery." | bucket -a jokes
+$ bucket jokes
+I wondered why the frisbee was getting bigger, and then it hit me
+A plateau is the highest form of flattery. 
+#+END_SRC
+
+List buckets:
+#+BEGIN_SRC sh
+$ bucket -l
+bucket  errors  jokes
+#+END_SRC
+
+List buckets verbosely (just the first line of each bucket):
+#+BEGIN_SRC sh
+$ bucket -lv
+bucket: I wondered why the frisbee was getting bigger, and then it hit me
+errors: [    7.817768] EXT4-fs (sdc1): re-mounted. Opts: errors=remount-ro,user_xattr
+jokes: I wondered why the frisbee was getting bigger, and then it hit me
+#+END_SRC
+
+List buckets completely:
+#+BEGIN_SRC sh
+$ bucket -lV
+bucket:
+I wondered why the frisbee was getting bigger, and then it hit me
+
+errors: 
+[    7.817768] EXT4-fs (sdc1): re-mounted. Opts: errors=remount-ro,user_xattr
+
+jokes:
+I wondered why the frisbee was getting bigger, and then it hit me
+A plateau is the highest form of flattery. 
+#+END_SRC
+
+Grep buckets:
+#+BEGIN_SRC sh
+$ bucket -g frisbee
+bucket:I wondered why the frisbee was getting bigger, and then it hit me
+jokes:I wondered why the frisbee was getting bigger, and then it hit me
+#+END_SRC
+
+Empty buckets:
+#+BEGIN_SRC sh
+$ bucket -e
+$ bucket
+$ bucket -e jokes
+$ bucket jokes
+#+END_SRC
+
+Expire old buckets:
+#+BEGIN_SRC sh
+$ sleep 14d  # Default: 2 weeks
+$ bucket -x
+$ bucket -l
+#+END_SRC
+
+And, of course, you can always:
+#+BEGIN_SRC sh
+$ echo fish | bucket
+$ bucket | cat
+*purr*
+
+# or
+$ echo cheezburger | bucket
+$ bucket | cat
+                 .-.   _                __
+                `  )`'-,`\        .-''``.-'
+   _.-''-.      _.'       `'--._.' ,-'  /
+   `\    _`'--'`                      .'
+     '._ _`-       .--.   .--.      (`
+        `.'       /    '.'    \      '.
+       .'         \  0  |  0  /        '.
+      /   _        '._.---._.'      _    \
+      /    `'-.      (     )    .-'`     \
+      / .---'_.   .   `-,-`  .  ._'---.  \
+      |   -'`   .       |      .  `'-    |
+      /_       .   '   /;\  '    .     ,_\
+        '-.     '-..-`( ' )`-..-'     /
+           '._         '-'         _.'
+              '-..,__       __,..-'
+                     `'---'`
+#+END_SRC
+
+** Usage
+Yes, you can haz usage.
+
+#+BEGIN_SRC
+bucket [OPTIONS] [BUCKET NAME]
+
+Options:
+    -a|--append   Append to bucket
+    -e|--empty    Empty bucket
+    -g|--grep     Grep in buckets
+    -h|--help     I can haz cheezburger?
+    -l|--list     List buckets
+    -v|--verbose  Verbose output
+    -V|--VERBOSE  VERY verbose output
+    -x|--expire   eXpire old buckets (default: +14 days)
+#+END_SRC
+
+** Aliases
+:PROPERTIES:
+:ID:       fa457145-d56c-4674-95c1-b1f162758730
+:END:
+If you like to think in terms of registers, you might like to alias ~bucket~ to something like ~r~ so you can do:
+
+#+BEGIN_SRC sh
+$ alias r bucket
+$ rgrep funny /usr/share/games/fortunes | r jokes
+$ r jokes
+...
+people:We all know that no one understands anything that is not funny.
+...
+
+$ alias rl "bucket -l"
+$ rl
+jokes
+#+END_SRC
+
+Or you might like to use:
+
+#+BEGIN_SRC sh
+$ alias buckets "bucket -l"
+$ buckets
+jokes
+#+END_SRC
+
+** Files
+=bucket= is provided as both a Bash and a Fish script.  They work identically (or else it's a bug!).  But Fish makes more sense, because how could you put a bash in a bucket?
+
+** Notes
++ The Fish version uses ~getopts.fish~, which is not yet part of the standard Fish distribution, so it's included here for convenience.  Just drop it into =~/.config/fish/functions=.  (And check it out!  It works really well and is well-documented.)
++ The default command for =expire= and =empty= is =trash-put=, part of the =trash-cli= package,which may not be installed on your system by default.  You can easily change the default to =rm= by changing the =deleteCommand= variable near the top of the script.  But =trash-cli= is a great package, so I recommend installing it.  It uses the standard XDG trash bin from the terminal.
+
+** Development
+I can't think of much else to add right now.  But I welcome suggestions and pull requests.  Bug reports may be kept to yourself (just kidding).
+
+** License
+I really don't think a license is necessary for something this straightfoward.  But consider it GPL'ed.
