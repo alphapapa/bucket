@@ -124,15 +124,17 @@ Yes, you can haz usage.
 #+BEGIN_SRC
 bucket [OPTIONS] [BUCKET NAME]
 
+Reads from STDIN and writes to STDOUT
+
 Options:
-    -a|--append   Append to bucket
-    -e|--empty    Empty bucket
-    -g|--grep     Grep in buckets
-    -h|--help     I can haz cheezburger?
-    -l|--list     List buckets
-    -v|--verbose  Verbose output
-    -V|--VERBOSE  VERY verbose output
-    -x|--expire   eXpire old buckets (default: +14 days)
+    -a, --append   Append to bucket
+    -e, --empty    Empty bucket
+    -g, --grep     Grep in buckets
+    -h, --help     I can haz cheezburger?
+    -l, --list     List buckets
+    -v, --verbose  Verbose output
+    -V, --VERBOSE  VERY verbose output
+    -x, --expire   eXpire old buckets (default: +14 days)
 #+END_SRC
 
 ** Aliases

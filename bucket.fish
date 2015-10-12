@@ -26,15 +26,17 @@ end
 function usage
     echo "bucket [OPTIONS] [BUCKET NAME]"
     echo
+    echo "Reads from STDIN and writes to STDOUT"
+    echo
     echo "Options:"
-    echo "    -a|--append   Append to bucket"
-    echo "    -e|--empty    Empty bucket"
-    echo "    -g|--grep     Grep in buckets"
-    echo "    -h|--help     I can haz cheezburger?"
-    echo "    -l|--list     List buckets"
-    echo "    -v|--verbose  Verbose output"
-    echo "    -V|--VERBOSE  VERY verbose output"
-    echo "    -x|--expire   eXpire old buckets (default: +$expireDays days)"
+    echo "    -a, --append   Append to bucket"
+    echo "    -e, --empty    Empty bucket"
+    echo "    -g, --grep     Grep in buckets"
+    echo "    -h, --help     I can haz cheezburger?"
+    echo "    -l, --list     List buckets"
+    echo "    -v, --verbose  Verbose output"
+    echo "    -V, --VERBOSE  VERY verbose output"
+    echo "    -x, --expire   eXpire old buckets (default: +$expireDays days)"
 end
 
 
