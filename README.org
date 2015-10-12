@@ -5,9 +5,9 @@ These cats all have buckets.  Where's your bucket?
 =bucket= is like a clipboard manager for the shell.  Or it's like Emacs/Vim-style registers for the shell.  It makes it easy to save clips of text to named "buckets" (or a default, unnamed bucket) and access them later.
 
 ** Examples
-Pour into default bucket:
+Pour into default bucket by argument:
 #+BEGIN_SRC sh
-$ echo "I wondered why the frisbee was getting bigger, and then it hit me" | bucket
+$ bucket "I wondered why the frisbee was getting bigger, and then it hit me"
 #+END_SRC
 
 Pour from default bucket:
@@ -16,12 +16,12 @@ $ bucket
 I wondered why the frisbee was getting bigger, and then it hit me
 #+END_SRC
 
-Pour default bucket into named bucket:
+Pipe default bucket into named bucket:
 #+BEGIN_SRC sh
 $ bucket | bucket jokes
 #+END_SRC
 
-Pour into named bucket, verbosely:
+Pipe into named bucket, verbosely:
 #+BEGIN_SRC sh
 $ dmesg | grep error | bucket -v errors
 [    7.817768] EXT4-fs (sdc1): re-mounted. Opts: errors=remount-ro,user_xattr
@@ -33,9 +33,9 @@ $ bucket errors
 [    7.817768] EXT4-fs (sdc1): re-mounted. Opts: errors=remount-ro,user_xattr
 #+END_SRC
 
-Append to a bucket:
+Append to a bucket by argument:
 #+BEGIN_SRC sh
-$ echo "A plateau is the highest form of flattery." | bucket -a jokes
+$ bucket -a jokes "A plateau is the highest form of flattery."
 $ bucket jokes
 I wondered why the frisbee was getting bigger, and then it hit me
 A plateau is the highest form of flattery. 
@@ -93,12 +93,12 @@ $ bucket -l
 
 And, of course, you can always:
 #+BEGIN_SRC sh
-$ echo fish | bucket
+$ fish -c jump | bucket
 $ bucket | cat
 *purr*
 
 # or
-$ echo cheezburger | bucket
+$ make cheezburger | bucket
 $ bucket | cat
                  .-.   _                __
                 `  )`'-,`\        .-''``.-'
@@ -122,9 +122,13 @@ $ bucket | cat
 Yes, you can haz usage.
 
 #+BEGIN_SRC
-bucket [OPTIONS] [BUCKET NAME]
+Usage:
+    command | bucket [OPTIONS] [BUCKET]
+    bucket [OPTIONS] [BUCKET] [DATA]
 
-Reads from STDIN and writes to STDOUT
+The first form reads data from STDIN and writes to the default bucket,
+or BUCKET if given.  The second form reads DATA and/or BUCKET from
+arguments, writing to a bucket or printing a bucket's contents.
 
 Options:
     -a, --append   Append to bucket
@@ -165,11 +169,12 @@ jokes
 #+END_SRC
 
 ** Files
-=bucket= is provided as both a Bash and a Fish script.  They work identically (or else it's a bug!).  But Fish makes more sense, because how could you put a bash in a bucket?
+=bucket= is provided as both a Bash and a Fish script.  They work identically (or else it's a bug!).  But Fish makes more sense, because how could you put a bash in a bucket?  But Bash is faster, because how fast is a goldfish, really?
 
 ** Notes
 + The Fish version uses ~getopts.fish~, which is not yet part of the standard Fish distribution, so it's included here for convenience.  Just drop it into =~/.config/fish/functions=.  (And check it out!  It works really well and is well-documented.)
 + The default command for =expire= and =empty= is =trash-put=, part of the =trash-cli= package,which may not be installed on your system by default.  You can easily change the default to =rm= by changing the =deleteCommand= variable near the top of the script.  But =trash-cli= is a great package, so I recommend installing it.  It uses the standard XDG trash bin from the terminal.
+    - Or you could change it to something like ~mv -t ~/.local/share/Trash/files~, although that might cause the trashed files to not show up in GUI trash apps, since they would be missing the ~.trashinfo~ files.
 
 ** Development
 I can't think of much else to add right now.  But I welcome suggestions and pull requests.  Bug reports may be kept to yourself (just kidding).

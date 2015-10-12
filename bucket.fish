@@ -8,8 +8,6 @@ set dir ~/.cache/bucket
 set deleteCommand trash-put
 set expireDays 14
 
-#set debug true
-
 
 # ** Functions
 function debug --description "Print debug message in yellow"
@@ -18,15 +16,26 @@ function debug --description "Print debug message in yellow"
     # https://github.com/fish-shell/fish-shell/issues/2378
     set -q debug
     and echo (set_color yellow)"DEBUG: $argv"(set_color normal) >&2
+    #and echo "DEBUG: $argv" >&2
 end
 function die --description "Print error message and quit"
     echo (set_color red)"$argv"(set_color normal) >&2
+    #echo "$argv" >&2
     exit 1
 end
+function verbose --description "Print message if verbose"
+    set -q verbose; and echo "$argv" >&2
+end
 function usage
-    echo "bucket [OPTIONS] [BUCKET NAME]"
+    echo "Usage:"
+    echo "    command | bucket [OPTIONS] [BUCKET]"
+    echo "    bucket [OPTIONS] [BUCKET] [DATA]"
     echo
-    echo "Reads from STDIN and writes to STDOUT"
+
+    echo "The first form reads data from STDIN and writes to the default bucket,
+or BUCKET if given.  The second form reads DATA and/or BUCKET from
+arguments, writing to a bucket or printing a bucket's contents."
+
     echo
     echo "Options:"
     echo "    -a, --append   Append to bucket"
@@ -40,23 +49,14 @@ function usage
 end
 
 
-# ** Check directory
-if not test -d $dir
-    # Make dir
-    mkdir -p $dir
-    or die "Unable to make bucket directory"
-end
-
-# cd just to be extra safe
-cd $dir
-or die "Unable to enter bucket directory"
-
-
 # ** Args
-while set optarg (getopts "a:append e:empty g:grep h:help l:list v:verbose V:VERBOSE x:expire" $argv)
+while set optarg (getopts "a:append d:debug e:empty g:grep h:help l:list v:verbose V:VERBOSE x:expire" $argv)
     switch $optarg[1]
         case a
             set append true
+        case d
+            set debug true
+            debug "Debugging on"
         case e
             set empty true
         case g
@@ -81,13 +81,65 @@ while set optarg (getopts "a:append e:empty g:grep h:help l:list v:verbose V:VER
     end
 end
 
-# Bucket name
-test -n "$optarg"; and set bucket $optarg
+set args $optarg
+set numargs (count $args)
+
+# ** Check directory
+if not test -d $dir
+    # Make dir
+    mkdir -p $dir
+    or die "Unable to make bucket directory"
+end
+
+# cd just to be extra safe
+cd $dir
+or die "Unable to enter bucket directory"
+
+
+# ** Actions
+if not isatty stdin
+    debug "Data from STDIN"
+
+    set stdin true
+
+    if test $numargs -eq 0
+        debug "No args; using default bucket"
+
+    else if test $numargs -eq 1
+        debug "One arg; using bucket: $args"
+
+        set bucket $args
+
+    else
+        debug "Multiple args; using bucket $args[1]"
+        verbose "Ignoring extra arguments"
+
+        set bucket $args[1]
+    end
+else
+    debug "No data from STDIN"
+
+    if test $numargs -eq 0
+        debug "No args"
+
+    else if test $numargs -eq 1
+        # One arg
+        set bucket $args
+
+        debug "Using bucket $bucket; no data remaining in args"
+
+    else
+        # Multiple args
+        set bucket $args[1]
+        set -e args[1]
+        set data $args
+
+        debug "Using bucket $bucket; using $numargs remaining args as data"
+    end
+end
 
 # Sanitize bucket name (since it's passed to eval and trash-put/rm)
 set bucket (echo $bucket | sed -r 's/[~.]//g')
-
-debug "Options: empty:$empty  verbose:$verbose  expire:$expire  bucket:$bucket"
 
 # *** Check for conflicting args
 if begin; set -q empty; and set -q expire; end
@@ -102,62 +154,83 @@ end
 # ** Main
 if set -q list
     # *** List buckets
+    debug "Listing buckets"
 
     if set -q verbose
         for file in *
             echo -e (set_color blue)$file(set_color normal)": "(head -n1 $file)
+            #echo "$file:" (head -n1 $file)
         end
-
     else if set -q reallyVerbose
         for file in *
             echo -e (set_color blue)$file(set_color normal)":"
+            #echo "$file:"
             cat $file
             echo
         end
-
     else
         ls
     end
 
 else if set -q grep
+    # *** Grep buckets
+    debug "Grepping buckets"
+    
     grep -i $grep *
 
 else if set -q empty
     # *** Empty bucket
-    if not test -f $dir/$bucket
-        set -q verbose; and die "No such bucket"
+    debug "Emptying bucket $bucket"
+
+    if not test -f "$dir/$bucket"
+        verbose "No such bucket"
     else
-        eval "$deleteCommand $verbose "$dir/$bucket
+        eval "$deleteCommand $verbose \"$dir/$bucket\""
     end
 
 else if set -q expire
     # *** Expire buckets
+    debug "Expiring buckets"
+    
     find $dir -type f -mtime $expireDays -exec $deleteCommand $verbose '{}' +
 
 else
-    if isatty stdin
-        # STDIN is a tty; not filling bucket (pasting)
-
-        # *** "Pour" (paste) bucket
-        if not test -r $dir/$bucket
-            set -q verbose; and die "No such bucket"
-        else if not test -s $dir/$bucket
-            set -q verbose; and die "Bucket is empty"
-
+    if begin; not set -q stdin; and not set -q data; end
+        # *** Pour bucket
+        debug "Pouring bucket..."
+        
+        if not test -r "$dir/$bucket"
+            verbose "No such bucket"
+        else if not test -s "$dir/$bucket"
+            verbose "Bucket is empty"
         else
-            cat $dir/$bucket
+            cat "$dir/$bucket"
         end
 
     else
-        # STDIN is not a tty; filling bucket (copying)
-
         # *** Fill bucket
-        if set -q append
-            cat >>$dir/$bucket
+        debug "Filling bucket..."
+
+        if set -q stdin
+            debug "Catting STDIN"
+
+            if set -q append
+                cat >>"$dir/$bucket"
+            else
+                cat >"$dir/$bucket"
+            end
+
         else
-            cat >$dir/$bucket
+            debug "Echoing data"
+            
+            if set -q append
+                echo $data >>"$dir/$bucket"
+            else
+                echo $data >"$dir/$bucket"
+            end
         end
 
-        set -q verbose; and cat $dir/$bucket
+        # **** Display bucket if verbose
+        verbose (cat "$dir/$bucket")
     end
 end

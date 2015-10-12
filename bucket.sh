@@ -21,10 +21,19 @@ function die {
     echo "$@" >&2
     exit 1
 }
+function verbose {
+    [[ $verbose ]] && echo "$@" >&2
+}
 function usage {
-    echo "bucket [OPTIONS] [BUCKET NAME]"
+    echo "Usage:"
+    echo "    command | bucket [OPTIONS] [BUCKET]"
+    echo "    bucket [OPTIONS] [BUCKET] [DATA]"
     echo
-    echo "Reads from STDIN and writes to STDOUT"
+
+    echo "The first form reads data from STDIN and writes to the default bucket,
+or BUCKET if given.  The second form reads DATA and/or BUCKET from
+arguments, writing to a bucket or printing a bucket's contents."
+
     echo
     echo "Options:"
     echo "    -a, --append   Append to bucket"
@@ -37,19 +46,9 @@ function usage {
     echo "    -x, --expire   eXpire old buckets (default: +$expireDays days)"
 }
 
-# ** Check directory
-if ! [[ -d $dir ]]
-then
-    # Make dir
-    mkdir -p $dir || die "Unable to make bucket directory"
-fi
-
-# cd just to be extra safe
-cd $dir || die "Unable to enter bucket directory"
-
 
 # ** Args
-args=$(getopt -o aeghlvVx -l "append,empty,grep,help,list,verbose,VERBOSE,expire" -n "bucket" -- "$@")
+args=$(getopt -o adeghlvVx -l "append,debug,empty,grep,help,list,verbose,VERBOSE,expire" -n "bucket" -- "$@")
 [[ $? -eq 0 ]] || exit 1
 
 eval set -- "$args"
@@ -59,6 +58,8 @@ do
     case "$1" in
         -a|--append)
             append=true ;;
+        -d|--debug)
+            debug=true ;;
         -e|--empty)
             empty=true ;;
         -g|--grep)
@@ -71,22 +72,71 @@ do
         -l|--list)
             list=true ;;
         -v|--verbose)
-            verbose=true ;;
+            verbose=-v ;;
         -V|--VERBOSE)
+            verbose=-v
             reallyVerbose=true ;;
         -x|--expire)
             expire=true ;;
         --)
-            # Bucket name
+            # Remaining args
             shift
-            [[ $@ ]] && bucket="$@"
+            args=($@)
+            numargs=${#args[@]}
             break ;;
     esac
 
     shift
 done
 
-# Sanitize bucket name (since it's passed to eval and trash-put/rm)
+# ** Actions
+if ! [[ -t 0 ]]
+then
+    debug "Data from STDIN"
+
+    stdin=true
+
+    if [[ $numargs -eq 0 ]]
+    then
+        debug "No args; using default bucket"
+
+    elif [[ $numargs -eq 1 ]]
+    then
+        debug "One arg; using bucket: $optarg"
+
+        bucket=$args
+
+    else
+        debug "Multiple args; using bucket $optarg[1]"
+        verbose "Ignoring extra arguments"
+
+        bucket="${args[0]}"
+    fi
+else
+    debug "No data from STDIN"
+
+    if [[ $numargs -eq 0 ]]
+    then
+        debug "No args"
+
+    elif [[ $numargs -eq 1 ]]
+    then
+        # One arg
+        bucket=$args
+
+        debug "Using bucket $bucket; no data remaining in args"
+
+    else
+        # Multiple args
+        bucket="${args[0]}"
+        unset args[0]
+        data="${args[@]}"
+
+        debug "Using bucket $bucket; using $numargs remaining args as data"
+    fi
+fi
+
+# *** Sanitize bucket name (since it's passed to eval and trash-put/rm)
 bucket=$(echo "$bucket" | sed -r 's/[~.]//g')
 
 debug "Options: append:$append  empty:$empty  grep:$grep  verbose:$verbose  reallyVerbose:$reallyVerbose  expire:$expire  bucket:$bucket"
@@ -101,12 +151,22 @@ then
     die "Conflicting operations given."
 fi
 
+# ** Check directory
+if ! [[ -d $dir ]]
+then
+    # Make dir
+    mkdir -p $dir || die "Unable to make bucket directory"
+fi
+
+# cd just to be extra safe
+cd $dir || die "Unable to enter bucket directory"
+
 
 # ** Main
 if [[ $list ]]
 then
     # *** List buckets
-    if [[ $verbose ]]
+    if [[ $verbose ]] && ! [[ $reallyVerbose ]]
     then
         for file in *
         do
@@ -131,6 +191,8 @@ then
 elif [[ $empty ]]
 then
     # *** Empty bucket
+    debug "Emptying bucket..."
+
     if ! [[ -f $dir/$bucket ]]
     then
         [[ $verbose ]] && die "No such bucket"
@@ -144,33 +206,47 @@ then
     find "$dir" -type f -mtime $expireDays -exec $deleteCommand $verbose '{}' +
 
 else
-    if [[ -t 0 ]]
+    if ! [[ $stdin || $data ]]
     then
-        # STDIN is a tty; not filling bucket (pasting)
+        # *** Pour bucket
+        debug "Pouring bucket..."
 
-        # *** "Pour" (paste) bucket
         if ! [[ -r $dir/$bucket ]]
         then
-            [[ $verbose ]] && die "No such bucket"
+            verbose "No such bucket"
         elif ! [[ -s $dir/$bucket ]]
         then
-            [[ $verbose ]] && die "Bucket is empty"
-
+            verbose "Bucket is empty"
         else
             cat "$dir/$bucket"
         fi
 
     else
-        # STDIN is not a tty; filling bucket (copying)
-
         # *** Fill bucket
-        if [[ $append ]]
-        then
-            cat >>"$dir/$bucket"
-        else
-            cat >"$dir/$bucket"
-        fi
+        debug "Filling bucket..."
 
-        [[ $verbose ]] && cat "$dir/$bucket"
+        if [[ $stdin ]]
+        then
+            debug "Catting STDIN into bucket"
+
+            if [[ $append ]]
+            then
+                cat >>"$dir/$bucket"
+            else
+                cat >"$dir/$bucket"
+            fi
+
+        else
+            debug "Echoing data into bucket"
+
+            if [[ $append ]]
+            then
+                echo "$data" >>"$dir/$bucket"
+            else
+                echo "$data" >"$dir/$bucket"
+            fi
+
+            verbose "$(cat $dir/$bucket)"
+        fi
     fi
 fi
