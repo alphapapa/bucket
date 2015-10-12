@@ -162,7 +162,7 @@ if isset list
 
     if isset verbose
         for file in *
-            echo -e (set_color blue)$file(set_color normal)": "(head -n1 $file)
+            echo -e (set_color blue)$file(set_color normal)": " (head -n1 $file)
             #echo "$file:" (head -n1 $file)
         end
     else if isset reallyVerbose
