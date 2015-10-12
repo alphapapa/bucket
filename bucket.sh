@@ -190,7 +190,7 @@ then
 
     if ! [[ -f $dir/$bucket ]]
     then
-        [[ $verbose ]] && die "No such bucket"
+        verbose "No such bucket"
     else
         eval "$deleteCommand $verbose \"$dir/$bucket\""
     fi
