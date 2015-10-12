@@ -88,19 +88,7 @@ end
 set args $optarg
 set numargs (count $args)
 
-# ** Check directory
-if not test -d $dir
-    # Make dir
-    mkdir -p $dir
-    or die "Unable to make bucket directory"
-end
-
-# cd just to be extra safe
-cd $dir
-or die "Unable to enter bucket directory"
-
-
-# ** Actions
+# *** Check STDIN and bucket name
 if not isatty stdin
     debug "Data from STDIN"
 
@@ -142,7 +130,7 @@ else
     end
 end
 
-# Sanitize bucket name (since it's passed to eval and trash-put/rm)
+# **** Sanitize bucket name (since it's passed to eval and trash-put/rm)
 set bucket (echo $bucket | sed -r 's/[~.]//g')
 
 # *** Check for conflicting args
@@ -153,6 +141,18 @@ end
 if isset conflicting
     die "Conflicting operations given."
 end
+
+
+# ** Check directory
+if not test -d $dir
+    # Make dir
+    mkdir -p $dir
+    or die "Unable to make bucket directory"
+end
+
+# cd just to be extra safe
+cd $dir
+or die "Unable to enter bucket directory"
 
 
 # ** Main

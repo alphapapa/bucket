@@ -89,7 +89,7 @@ do
     shift
 done
 
-# ** Actions
+# *** Check STDIN and bucket name
 if ! [[ -t 0 ]]
 then
     debug "Data from STDIN"
@@ -136,10 +136,8 @@ else
     fi
 fi
 
-# *** Sanitize bucket name (since it's passed to eval and trash-put/rm)
+# **** Sanitize bucket name (since it's passed to eval and trash-put/rm)
 bucket=$(echo "$bucket" | sed -r 's/[~.]//g')
-
-debug "Options: append:$append  empty:$empty  grep:$grep  verbose:$verbose  reallyVerbose:$reallyVerbose  expire:$expire  bucket:$bucket"
 
 # *** Check for conflicting args
 if [[ $empty && $expire ]]
