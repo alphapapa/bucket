@@ -14,7 +14,7 @@ function debug --description "Print debug message in yellow"
     # Do NOT use separate set_color commands, or else you risk
     # polluting later command substitutions!  See
     # https://github.com/fish-shell/fish-shell/issues/2378
-    set -q debug
+    isset debug
     and echo (set_color yellow)"DEBUG: $argv"(set_color normal) >&2
     #and echo "DEBUG: $argv" >&2
 end
@@ -24,7 +24,11 @@ function die --description "Print error message and quit"
     exit 1
 end
 function verbose --description "Print message if verbose"
-    set -q verbose; and echo "$argv" >&2
+    isset verbose; and echo "$argv" >&2
+end
+function isset --description "Test if variables named by args are set"
+    # "set -q" everywhere gets old
+    set -q $argv
 end
 function usage
     echo "Usage:"
@@ -142,26 +146,26 @@ end
 set bucket (echo $bucket | sed -r 's/[~.]//g')
 
 # *** Check for conflicting args
-if begin; set -q empty; and set -q expire; end
+if begin; isset empty; and isset expire; end
     set conflicting true
 end
 
-if set -q conflicting
+if isset conflicting
     die "Conflicting operations given."
 end
 
 
 # ** Main
-if set -q list
+if isset list
     # *** List buckets
     debug "Listing buckets"
 
-    if set -q verbose
+    if isset verbose
         for file in *
             echo -e (set_color blue)$file(set_color normal)": "(head -n1 $file)
             #echo "$file:" (head -n1 $file)
         end
-    else if set -q reallyVerbose
+    else if isset reallyVerbose
         for file in *
             echo -e (set_color blue)$file(set_color normal)":"
             #echo "$file:"
@@ -172,13 +176,13 @@ if set -q list
         ls
     end
 
-else if set -q grep
+else if isset grep
     # *** Grep buckets
     debug "Grepping buckets"
     
     grep -i $grep *
 
-else if set -q empty
+else if isset empty
     # *** Empty bucket
     debug "Emptying bucket $bucket"
 
@@ -188,14 +192,14 @@ else if set -q empty
         eval "$deleteCommand $verbose \"$dir/$bucket\""
     end
 
-else if set -q expire
+else if isset expire
     # *** Expire buckets
     debug "Expiring buckets"
     
     find $dir -type f -mtime $expireDays -exec $deleteCommand $verbose '{}' +
 
 else
-    if begin; not set -q stdin; and not set -q data; end
+    if begin; not isset stdin; and not isset data; end
         # *** Pour bucket
         debug "Pouring bucket..."
         
@@ -211,10 +215,10 @@ else
         # *** Fill bucket
         debug "Filling bucket..."
 
-        if set -q stdin
+        if isset stdin
             debug "Catting STDIN"
 
-            if set -q append
+            if isset append
                 cat >>"$dir/$bucket"
             else
                 cat >"$dir/$bucket"
@@ -223,7 +227,7 @@ else
         else
             debug "Echoing data"
             
-            if set -q append
+            if isset append
                 echo $data >>"$dir/$bucket"
             else
                 echo $data >"$dir/$bucket"
@@ -231,6 +235,6 @@ else
         end
 
         # **** Display bucket if verbose
-        verbose (cat "$dir/$bucket")
+        isset verbose; and cat "$dir/$bucket"
     end
 end
