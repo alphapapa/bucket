@@ -198,7 +198,7 @@ then
 elif [[ $expire ]]
 then
     # *** Expire buckets
-    find "$dir" -type f -mtime $expireDays -exec $deleteCommand $verbose '{}' +
+    find "$dir" -type f -mtime $expireDays -exec "$deleteCommand $verbose" '{}' +
 
 else
     if ! [[ $stdin || $data ]]
