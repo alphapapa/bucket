@@ -161,7 +161,7 @@ cd $dir || die "Unable to enter bucket directory"
 if [[ $list ]]
 then
     # *** List buckets
-    if [[ $verbose ]] && ! [[ $reallyVerbose ]]
+    if [[ $verbose  && ! $reallyVerbose ]]
     then
         for file in *
         do
