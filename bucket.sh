@@ -12,9 +12,6 @@ expireDays=14
 
 # ** Functions
 function debug {
-    # Do NOT use separate set_color commands, or else you risk
-    # polluting later command substitutions!  See
-    # https://github.com/fish-shell/fish-shell/issues/2378
     [[ $debug ]] && echo "DEBUG: $@" >&2
 }
 function die {
