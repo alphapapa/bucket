@@ -244,7 +244,9 @@ else
                 echo "$data" >"$dir/$bucket"
             fi
 
-            verbose "$(cat $dir/$bucket)"
         fi
+
+        # Display bucket if verbose
+        [[ $verbose ]] && cat "$dir/$bucket"
     fi
 fi
