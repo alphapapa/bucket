@@ -8,7 +8,6 @@ dir=~/.cache/bucket
 deleteCommand=trash-put
 expireDays=14
 
-#debug=true
 
 # ** Functions
 function debug {
