@@ -93,7 +93,22 @@ $ bucket -l
 
 And, of course, you can always:
 #+BEGIN_SRC sh
-$ fish -c jump | bucket
+$ bucket <(echo '
+                  ___
+   ___======____=---=)
+ /T            \_--===)
+ [ \ (0)   \~    \_-==)
+  \      / )J~~    \-=)
+   \\\\___/  )JJ~~~   \)
+    \_____/JJ~~~~~    \\
+    / \  , \J~~~~~     \\
+   (-\)\=|\\\\\~~~~       L__
+   (\\\\)  (\\\\\)_           \==__
+    \V    \\\\\) ===_____   \\\\\\\\\\\\
+           \V)     \_) \\\\\\\\JJ\J\)
+                       /J\JT\JJJJ)
+                       (JJJ| \UUU)
+                        (UU)')
 $ bucket | cat
 *purr*
 
