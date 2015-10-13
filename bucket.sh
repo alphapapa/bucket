@@ -33,7 +33,8 @@ arguments, writing to a bucket or printing a bucket's contents."
     echo
     echo "Options:"
     echo "    -a, --append   Append to bucket"
-    echo "    -e, --empty    Empty bucket"
+    echo "    -e, --edit     Edit bucket"
+    echo "    -E, --empty    Empty bucket"
     echo "    -g, --grep     Grep in buckets"
     echo "    -h, --help     I can haz cheezburger?"
     echo "    -l, --list     List buckets"
@@ -44,7 +45,7 @@ arguments, writing to a bucket or printing a bucket's contents."
 
 
 # ** Args
-args=$(getopt -o adeghlvVx -l "append,debug,empty,grep,help,list,verbose,VERBOSE,expire" -n "bucket" -- "$@")
+args=$(getopt -o adeEghlvVx -l "append,debug,edit,empty,grep,help,list,verbose,VERBOSE,expire" -n "bucket" -- "$@")
 [[ $? -eq 0 ]] || exit 1
 
 eval set -- "$args"
@@ -56,7 +57,9 @@ do
             append=true ;;
         -d|--debug)
             debug=true ;;
-        -e|--empty)
+        -e|--edit)
+            edit=true ;;
+        -E|--empty)
             empty=true ;;
         -g|--grep)
             shift
@@ -181,6 +184,11 @@ then
 elif [[ $grep ]]
 then
     grep -i "$grep" ./*
+
+elif [[ $edit ]]
+then
+    # *** Edit bucket
+    eval "$EDITOR \"$dir/$bucket\""
 
 elif [[ $empty ]]
 then

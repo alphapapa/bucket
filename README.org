@@ -147,7 +147,8 @@ arguments, writing to a bucket or printing a bucket's contents.
 
 Options:
     -a, --append   Append to bucket
-    -e, --empty    Empty bucket
+    -e, --edit     Edit bucket
+    -E, --empty    Empty bucket
     -g, --grep     Grep in buckets
     -h, --help     I can haz cheezburger?
     -l, --list     List buckets

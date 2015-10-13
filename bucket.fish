@@ -43,7 +43,8 @@ arguments, writing to a bucket or printing a bucket's contents."
     echo
     echo "Options:"
     echo "    -a, --append   Append to bucket"
-    echo "    -e, --empty    Empty bucket"
+    echo "    -e, --edit     Edit bucket"
+    echo "    -E, --empty    Empty bucket"
     echo "    -g, --grep     Grep in buckets"
     echo "    -h, --help     I can haz cheezburger?"
     echo "    -l, --list     List buckets"
@@ -54,7 +55,7 @@ end
 
 
 # ** Args
-while set optarg (getopts "a:append d:debug e:empty g:grep h:help l:list v:verbose V:VERBOSE x:expire" $argv)
+while set optarg (getopts "a:append d:debug e:edit E:empty g:grep h:help l:list v:verbose V:VERBOSE x:expire" $argv)
     switch $optarg[1]
         case a
             set append true
@@ -62,6 +63,8 @@ while set optarg (getopts "a:append d:debug e:empty g:grep h:help l:list v:verbo
             set debug true
             debug "Debugging on"
         case e
+            set edit true
+        case E
             set empty true
         case g
             set -e optarg[1]
@@ -182,6 +185,12 @@ else if isset grep
     
     grep -i $grep *
 
+else if isset edit
+    # *** Edit bucket
+    debug "Editing bucket"
+
+    eval "$EDITOR \"$dir/$bucket\""
+    
 else if isset empty
     # *** Empty bucket
     debug "Emptying bucket $bucket"
