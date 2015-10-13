@@ -194,6 +194,26 @@ $ buckets
 jokes
 #+END_SRC
 
+If you like to keep a to-do list, you might find this handy:
+
+#+BEGIN_SRC sh
+$ alias rt "bucket today"
+$ alias rta "'bucket -a today"
+$ rta Walk the cat
+$ rt
+Walk the cat
+$ rta Feed the cat
+$ rt
+Walk the cat
+Feed the cat
+$ cat --walk --feed
+MEOW!
+*purr*
+$ rt -E
+$ rt
+$
+#+END_SRC
+
 ** Development
 I can't think of much else to add right now.  But I welcome suggestions and pull requests.  Bug reports may be kept to yourself (just kidding).
 
