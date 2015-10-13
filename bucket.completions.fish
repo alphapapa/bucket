@@ -1,7 +1,8 @@
 #!/usr/bin/env fish
 
 complete -c bucket -Af -s a -l append
-complete -c bucket -Af -s e -l empty
+complete -c bucket -Af -s e -l edit
+complete -c bucket -Af -s E -l empty
 complete -c bucket -Af -s g -l grep
 complete -c bucket -Af -s h -l help
 complete -c bucket -Af -s l -l list
