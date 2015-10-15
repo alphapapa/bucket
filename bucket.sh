@@ -155,11 +155,11 @@ fi
 if ! [[ -d $dir ]]
 then
     # Make dir
-    mkdir -p $dir || die "Unable to make bucket directory"
+    mkdir -p "$dir" || die "Unable to make bucket directory"
 fi
 
 # cd just to be extra safe
-cd $dir || die "Unable to enter bucket directory"
+cd "$dir" || die "Unable to enter bucket directory"
 
 
 # ** Main
