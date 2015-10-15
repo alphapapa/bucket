@@ -147,6 +147,7 @@ arguments, writing to a bucket or printing a bucket's contents.
 
 Options:
     -a, --append   Append to bucket
+    -d, --date     Sort by date
     -e, --edit     Edit bucket
     -E, --empty    Empty bucket
     -g, --grep     Grep in buckets

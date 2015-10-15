@@ -33,6 +33,7 @@ arguments, writing to a bucket or printing a bucket's contents."
     echo
     echo "Options:"
     echo "    -a, --append   Append to bucket"
+    echo "    -d, --date     Sort by date"
     echo "    -e, --edit     Edit bucket"
     echo "    -E, --empty    Empty bucket"
     echo "    -g, --grep     Grep in buckets"
@@ -45,7 +46,7 @@ arguments, writing to a bucket or printing a bucket's contents."
 
 
 # ** Args
-args=$(getopt -o adeEghlvVx -l "append,debug,edit,empty,grep,help,list,verbose,VERBOSE,expire" -n "bucket" -- "$@")
+args=$(getopt -o adDeEghlvVx -l "append,date,debug,edit,empty,grep,help,list,verbose,VERBOSE,expire" -n "bucket" -- "$@")
 [[ $? -eq 0 ]] || exit 1
 
 eval set -- "$args"
@@ -55,7 +56,9 @@ do
     case "$1" in
         -a|--append)
             append=true ;;
-        -d|--debug)
+        -d|--date)
+            sort=-tr ;;
+        -D|--debug)
             debug=true ;;
         -e|--edit)
             edit=true ;;
@@ -80,7 +83,7 @@ do
         --)
             # Remaining args
             shift
-            args=($@)
+            args=("$@")
             numargs=${#args[@]}
             break ;;
     esac
@@ -163,15 +166,17 @@ cd $dir || die "Unable to enter bucket directory"
 if [[ $list ]]
 then
     # *** List buckets
+    readarray -t files <<<"$(ls $sort)"
+
     if [[ $verbose  && ! $reallyVerbose ]]
     then
-        for file in *
+        for file in "${files[@]}"
         do
             echo "$file: $(head -n1 "$file")"
         done
     elif [[ $reallyVerbose ]]
     then
-        for file in *
+        for file in "${files[@]}"
         do
             echo "$file:"
             cat "$file"

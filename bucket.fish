@@ -43,6 +43,7 @@ arguments, writing to a bucket or printing a bucket's contents."
     echo
     echo "Options:"
     echo "    -a, --append   Append to bucket"
+    echo "    -d, --date     Sort by date"
     echo "    -e, --edit     Edit bucket"
     echo "    -E, --empty    Empty bucket"
     echo "    -g, --grep     Grep in buckets"
@@ -55,11 +56,13 @@ end
 
 
 # ** Args
-while set optarg (getopts "a:append d:debug e:edit E:empty g:grep h:help l:list v:verbose V:VERBOSE x:expire" $argv)
+while set optarg (getopts "a:append d:date D:debug e:edit E:empty g:grep h:help l:list v:verbose V:VERBOSE x:expire" $argv)
     switch $optarg[1]
         case a
             set append true
         case d
+            set sort "-tr"
+        case D
             set debug true
             debug "Debugging on"
         case e
@@ -164,12 +167,12 @@ if isset list
     debug "Listing buckets"
 
     if isset verbose
-        for file in *
+        for file in (ls $sort)
             echo -e (set_color blue)$file(set_color normal)": " (head -n1 $file)
             #echo "$file:" (head -n1 $file)
         end
     else if isset reallyVerbose
-        for file in *
+        for file in (ls $sort)
             echo -e (set_color blue)$file(set_color normal)":"
             #echo "$file:"
             cat $file
