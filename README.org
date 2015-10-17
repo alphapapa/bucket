@@ -76,11 +76,19 @@ bucket:I wondered why the frisbee was getting bigger, and then it hit me
 jokes:I wondered why the frisbee was getting bigger, and then it hit me
 #+END_SRC
 
-Empty buckets:
+Edit buckets (using =$EDITOR=):
 #+BEGIN_SRC sh
 $ bucket -e
-$ bucket
+Waiting for Emacs...
 $ bucket -e jokes
+Waiting for Emacs...
+#+END_SRC
+
+Empty buckets:
+#+BEGIN_SRC sh
+$ bucket -E
+$ bucket
+$ bucket -E jokes
 $ bucket jokes
 #+END_SRC
 
