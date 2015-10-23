@@ -227,4 +227,4 @@ $
 I can't think of much else to add right now.  But I welcome suggestions and pull requests.  Bug reports may be kept to yourself (just kidding).
 
 ** License
-I really don't think a license is necessary for something this straightfoward.  But consider it GPL'ed.
+GPLv3
