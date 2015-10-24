@@ -176,7 +176,7 @@ then
     # *** List buckets
     readarray -t files <<<"$(ls $sort)"
 
-    if [[ $verbose  && ! $reallyVerbose ]]
+    if [[ $verbose && ! $reallyVerbose ]]
     then
         for file in "${files[@]}"
         do

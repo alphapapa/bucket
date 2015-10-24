@@ -169,7 +169,7 @@ Options:
 ** Files
 =bucket= is provided as both a Bash and a Fish script.  They work identically (or else it's a bug!).  But Fish makes more sense, because how could you put a bash in a bucket?  But Bash is faster, because how fast is a goldfish, really?
 
-~bucket.completions.fish~ can be added your Fish session using the ~source~ command, and then Fish will provide =TAB= auto-completion for options and bucket names.
+~bucket.completions.fish~ can be added to your Fish session using the ~source~ command, and then Fish will provide =TAB= auto-completion for options and bucket names.
 
 ** Notes
 + The Fish version uses ~getopts.fish~, which is not yet part of the standard Fish distribution, so it's included here for convenience.  Just drop it into =~/.config/fish/functions=.  (And check it out!  It works really well and is well-documented.)
