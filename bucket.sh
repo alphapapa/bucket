@@ -123,10 +123,18 @@ else
 
     elif [[ $numargs -eq 1 ]]
     then
-        # One arg
-        bucket=$args
+        if [[ -f $dir/$args ]]
+        then
+            # Bucket exists with name; pour it
+            bucket=$args
 
-        debug "Using bucket $bucket; no data remaining in args"
+            debug "Using bucket $bucket; no data remaining in args"
+        else
+            # No such bucket; use args as data for default bucket
+            data=$args
+
+            debug "No bucket named '$args'; using args as data for default bucket"
+        fi
 
     else
         # Multiple args

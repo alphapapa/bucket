@@ -123,10 +123,17 @@ else
         debug "No args"
 
     else if test $numargs -eq 1
-        # One arg
-        set bucket $args
+        if test -f $dir/$args
+            # Bucket exists with name; pour it
+            set bucket $args
 
-        debug "Using bucket $bucket; no data remaining in args"
+            debug "Using bucket $bucket; no data remaining in args"
+        else
+            # No such bucket; use args as data for default bucket
+            set data $args
+
+            debug "No bucket named '$args'; using args as data for default bucket"
+        end
 
     else
         # Multiple args
