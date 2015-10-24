@@ -24,7 +24,9 @@ function die --description "Print error message and quit"
     exit 1
 end
 function verbose --description "Print message if verbose"
-    isset verbose; and echo "$argv" >&2
+    isset verbose
+    or isset reallyVerbose
+    and echo "$argv" >&2
 end
 function isset --description "Test if variables named by args are set"
     # "set -q" everywhere gets old
@@ -247,6 +249,8 @@ else
         end
 
         # **** Display bucket if verbose
-        isset verbose; and cat "$dir/$bucket"
+        isset verbose
+        or isset reallyVerbose
+        and cat "$dir/$bucket"
     end
 end
