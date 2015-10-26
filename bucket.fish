@@ -54,11 +54,12 @@ arguments, writing to a bucket or printing a bucket's contents."
     echo "    -v, --verbose  Verbose output"
     echo "    -V, --VERBOSE  VERY verbose output"
     echo "    -x, --expire   eXpire old buckets (default: +$expireDays days)"
+    echo "    --directory    Bucket storage directory"
 end
 
 
 # ** Args
-while set optarg (getopts "a:append d:date D:debug e:edit E:empty g:grep h:help l:list v:verbose V:VERBOSE x:expire" $argv)
+while set optarg (getopts "a:append d:date D:debug e:edit E:empty g:grep h:help l:list v:verbose V:VERBOSE x:expire directory:" $argv)
     switch $optarg[1]
         case a
             set append true
@@ -86,6 +87,9 @@ while set optarg (getopts "a:append d:date D:debug e:edit E:empty g:grep h:help 
             set reallyVerbose true
         case x
             set expire
+        case directory
+            set customDir $optarg[2]
+            debug "Using custom directory: $customDir"
         case \*
             usage
             echo
@@ -159,15 +163,25 @@ end
 
 
 # ** Check directory
-if not test -d $dir
-    # Make dir
-    mkdir -p $dir
-    or die "Unable to make bucket directory"
+if isset customDir
+    # Custom bucket directory; don't make it
+    test -d $customDir
+    or die "Directory doesn't exist: $customDir"
+
+    set dir $customDir
+
+else
+    # Standard bucket directory; make it if necessary
+    if not test -d $dir
+        # Make dir
+        mkdir -p $dir
+        or die "Unable to make bucket directory: $dir"
+    end
 end
 
 # cd just to be extra safe
 cd $dir
-or die "Unable to enter bucket directory"
+or die "Unable to enter bucket directory: $dir"
 
 
 # ** Main
