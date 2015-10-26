@@ -167,14 +167,18 @@ Options:
 #+END_SRC
 
 ** Files
-=bucket= is provided as both a Bash and a Fish script.  They work identically (or else it's a bug!).  But Fish makes more sense, because how could you put a bash in a bucket?  But Bash is faster, because how fast is a goldfish, really?
++ =bucket= is provided as both a Bash script, ~bucket.sh~, and a Fish script, ~bucket.fish~.  They work identically (or else it's a bug!).  But Fish makes more sense, because how could you put a bash in a bucket?  But Bash is faster, because how fast is a goldfish, really?
++ ~bucket.completions.fish~ can be added to your Fish session using the ~source~ command, and then Fish will provide =TAB= auto-completion for options and bucket names.
++ ~getopts.fish~ is used by the Fish version, and it's not yet part of the standard Fish distribution, so it's included here for convenience.  Just drop it into =~/.config/fish/functions=.  (And check it out!  It works really well and is well-documented.)
 
-~bucket.completions.fish~ can be added to your Fish session using the ~source~ command, and then Fish will provide =TAB= auto-completion for options and bucket names.
-
-** Notes
-+ The Fish version uses ~getopts.fish~, which is not yet part of the standard Fish distribution, so it's included here for convenience.  Just drop it into =~/.config/fish/functions=.  (And check it out!  It works really well and is well-documented.)
-+ The default command for =expire= and =empty= is =trash-put=, part of the =trash-cli= package,which may not be installed on your system by default.  You can easily change the default to =rm= by changing the =deleteCommand= variable near the top of the script.  But =trash-cli= is a great package, so I recommend installing it.  It uses the standard XDG trash bin from the terminal.
+** Configuration
++ *Empty command*
+    - The default command for =empty= and =expire= is =trash-put=, part of the =trash-cli= package,which may not be installed on your system by default.  =trash-cli= is a great package, so I recommend installing it.  It uses the standard XDG trash bin from the terminal.
+    - If you prefer, you can easily change the default to =rm= by changing the =deleteCommand= variable near the top of the script.  
     - Or you could change it to something like ~mv -t ~/.local/share/Trash/files~, although that might cause the trashed files to not show up in GUI trash apps, since they would be missing the ~.trashinfo~ files.
++ *Storage directory*
+    - The default directory for bucket storage is =~/.cache/bucket=.  =~/.cache= is probably excluded by most backup programs (it should be), so this seems like a good place for buckets, since buckets are intended to be temporary storage.
+    - However, you can set a custom directory using  the ~--directory~ option.  Unlike the default directory, it will not be created for you if it doesn't exist.  You might set this option in an alias, that way whenever you use that alias, the buckets would be stored in that directory.  This could be helpful if you wanted to store a certain set of buckets more permanently, in a place where they would typically be included in backups.
 
 ** Aliases
 :PROPERTIES:
@@ -222,6 +226,20 @@ $ rt -E
 $ rt
 $
 #+END_SRC
+
+If you want to store buckets more permanently, like for a personal log, you might use an alias like:
+
+#+BEGIN_SRC sh
+$ alias log 'bucket.sh --directory ~/.log --append $(date --rfc-3339=date) $(date +%H:%M)'
+$ log "Gus said that he wants to get a fish, just as a pet.  I'm afraid I don't trust him."
+$ log "Just as I suspected, I caught him ordering tartar sauce online.  He'll be eating nothing but cheezburgers from now on."
+$ log -lV
+2015-10-25:
+20:26 Gus said that he wants to get a fish, just as a pet.  I'm afraid I don't trust him.
+21:12 Just as I suspected, I caught him ordering tartar sauce online.  He'll be eating nothing but cheezburgers from now on.
+#+END_SRC
+
+*Note:* ~bucket.sh~ handles arguments slightly differently than ~bucket.fish~.  The Bash version allows specifying options and arguments in any order, while the Fish version treats all options after the first non-option argument as non-option arguments.  This means that the Bash version allows a command like ~bucket.sh --directory ~/.log --append Monday 13:37 -l -V~, and the ~-l -V~ would cause the script to list buckets verbosely; but the same command using ~bucket.fish~ would append the string ~13:37 -l -V~ to the ~Monday~ bucket.  So if you use the Fish version and want to use an alias like this, you'll need to use a separate alias for listing, like ~alias logV 'bucket.fish --directory ~/.log -lV~.
 
 ** Development
 I can't think of much else to add right now.  But I welcome suggestions and pull requests.  Bug reports may be kept to yourself (just kidding).

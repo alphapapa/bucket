@@ -46,7 +46,7 @@ arguments, writing to a bucket or printing a bucket's contents."
 
 
 # ** Args
-args=$(getopt -o adDeEghlvVx -l "append,date,debug,edit,empty,grep,help,list,verbose,VERBOSE,expire" -n "bucket" -- "$@")
+args=$(getopt -o adDeEghlvVx -l "append,date,debug,edit,empty,grep,help,list,verbose,VERBOSE,expire,directory:" -n "bucket" -- "$@")
 [[ $? -eq 0 ]] || exit 1
 
 eval set -- "$args"
@@ -80,6 +80,10 @@ do
             reallyVerbose=true ;;
         -x|--expire)
             expire=true ;;
+        --directory)
+            shift
+            customDir="$1"
+            ;;
         --)
             # Remaining args
             shift
@@ -160,14 +164,24 @@ then
 fi
 
 # ** Check directory
-if ! [[ -d $dir ]]
+if [[ $customDir ]]
 then
-    # Make dir
-    mkdir -p "$dir" || die "Unable to make bucket directory"
+    # Custom bucket directory; don't make it
+    [[ -d $customDir ]] || die "Directory doesn't exist: $customDir"
+
+    dir=$customDir
+
+else
+    # Standard bucket directory; make it if necessary
+    if ! [[ -d $dir ]]
+    then
+        # Make dir
+        mkdir -p "$dir" || die "Unable to make bucket directory: $dir"
+    fi
 fi
 
 # cd just to be extra safe
-cd "$dir" || die "Unable to enter bucket directory"
+cd "$dir" || die "Unable to enter bucket directory: $dir"
 
 
 # ** Main
