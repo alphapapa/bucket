@@ -170,7 +170,9 @@ Options:
 ** Installation
 
 *** Automatic
-To install ~bucket~ automatically, run ~sudo make install~, which will install the Bash script, the Fish completions, the man page, and this =README= file.  (However, I recommend using the fantastic =checkinstall= utility, which automatically turns any ~make install~ command (or any other command) into a Debian/RPM package and installs it using your distro's package manager.  This helps you keep track of what software you have installed, and makes it easy to uninstall software.  =checkinstall= should be packaged in nearly all Linux distros.)
+To install ~bucket~ automatically, run ~sudo make install~, which will install the Bash script, the Fish completions, the man page, and this =README= file.  
+
+*Note:* I recommend using the fantastic =checkinstall= utility, which automatically turns any ~make install~ command (or any other command) into a Debian/RPM package and installs it using your distro's package manager.  This helps you keep track of what software you have installed, and makes it easy to uninstall software.  =checkinstall= should be packaged in nearly all Linux distros.
 
 If you want to install the Fish script, run ~sudo make install-fish~, which will do all of the above, except with the Fish script instead of the Bash script.
 
