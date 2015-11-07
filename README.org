@@ -167,10 +167,31 @@ Options:
     --directory    Bucket storage directory
 #+END_SRC
 
+** Installation
+
+*** Automatic
+To install ~bucket~ automatically, run ~sudo make install~, which will install the Bash script, the Fish completions, the man page, and this =README= file.  
+
+*Note:* I recommend using the fantastic =checkinstall= utility, which automatically turns any ~make install~ command (or any other command) into a Debian/RPM package and installs it using your distro's package manager.  This helps you keep track of what software you have installed, and makes it easy to uninstall software.  =checkinstall= should be packaged in nearly all Linux distros.
+
+If you want to install the Fish script, run ~sudo make install-fish~, which will do all of the above, except with the Fish script instead of the Bash script.
+
+*** Manual
+Or, you can install it manually, e.g. into your homedir:
+
++ =bucket.sh= or =bucket.fish= should go into a directory in your =PATH=.  You will probably want to remove the extension or symlink it to make it easier to type.
++ =completions/bucket.fish= can be put in =~/.config/fish/completions=, and then Fish will provide =TAB= auto-completion for options and bucket names.
++ =getopts.fish= should be put in =~/.config/fish/functions= if you are using =bucket.fish=.
+
+*** Uninstallation
+If you installed with ~make install~, you can uninstall =bucket= (*D:*) with ~sudo make uninstall~.
+
 ** Files
 + =bucket= is provided as both a Bash script, ~bucket.sh~, and a Fish script, ~bucket.fish~.  They work identically (or else it's a bug!).  But Fish makes more sense, because how could you put a bash in a bucket?  But Bash is faster, because how fast is a goldfish, really?
-+ ~bucket.completions.fish~ can be added to your Fish session using the ~source~ command, and then Fish will provide =TAB= auto-completion for options and bucket names.
++ =completions/bucket.fish= can be put in =~/.config/fish/completions=, and then Fish will provide =TAB= auto-completion for options and bucket names.
 + ~getopts.fish~ is used by the Fish version, and it's not yet part of the standard Fish distribution, so it's included here for convenience.  Just drop it into =~/.config/fish/functions=.  (And check it out!  It works really well and is well-documented.)
++ =bucket.1= is the man page, man.
++ =Makefile= is how we make the donuts.
 
 ** Configuration
 + *Empty command*

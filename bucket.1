@@ -1,0 +1,209 @@
+.TH BUCKET 1
+.SH NAME
+bucket \- a clipboard manager or registers for the shell
+.SH SYNOPSIS
+command | \fBbucket\fR [\fIOPTIONS\fR] [\fIBUCKET\fR]
+.PP
+\fBbucket\fR [\fIOPTIONS\fR] [\fIBUCKET\fR] [\fIDATA\fR]
+.PP
+The first form reads data from \fISTDIN\fR and writes to the default bucket, or \fIBUCKET\fR if given.
+The second form reads \fIDATA\fR and/or \fIBUCKET\fR from arguments, writing to a bucket or printing a bucket's contents.
+.SH DESCRIPTION
+\fBbucket\fR is like Emacs/Vim-style registers for the shell.
+It makes it easy to save clips of text to named "buckets" (or a default, unnamed bucket) and access them later.
+.SH OPTIONS
+.TP
+\fB\-a\fR, \fB\-\-append\fR
+Append to bucket
+.TP
+\fB\-d\fR, \fB\-\-date\fR
+Sort by date
+.TP
+\fB\-e\fR, \fB\-\-edit\fR
+Edit bucket
+.TP
+\fB\-E\fR, \fB\-\-empty\fR
+Empty bucket
+.TP
+\fB\-g\fR, \fB\-\-grep\fR
+Grep in buckets
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+I can haz cheezburger?
+.TP
+\fB\-l\fR, \fB\-\-list\fR
+List buckets
+.TP
+\fB\-v\fR, \fB\-\-verbose\fR
+Verbose output
+.TP
+\fB\-V\fR, \fB\-\-VERBOSE\fR
+VERY verbose output
+.TP
+\fB\-x\fR, \fB\-\-expire\fR
+eXpire old buckets (default: +14 days)
+.TP
+\fB\-\-directory\fR
+Bucket storage directory
+.SH EXAMPLES
+Pour into default bucket by argument:
+.PP
+.nf
+.RS
+$ \fBbucket\fR "I wondered why the frisbee was getting bigger, and then it hit me"
+.RE
+.fi
+.PP
+Pour from default bucket:
+.PP
+.nf
+.RS
+$ \fBbucket\fR
+I wondered why the frisbee was getting bigger, and then it hit me
+.RE
+.fi
+.PP
+Pipe default bucket into named bucket:
+.PP
+.nf
+.RS
+$ \fBbucket\fR | \fBbucket\fR jokes
+.RE
+.fi
+.PP
+Pipe into named bucket, verbosely:
+.PP
+.nf
+.RS
+$ dmesg | grep error | \fBbucket\fR -v errors
+[    7.817768] EXT4-fs (sdc1): re-mounted. Opts: errors=remount-ro,user_xattr
+.RE
+.fi
+.PP
+Pour from named bucket:
+.PP
+.nf
+.RS
+$ \fBbucket\fR errors
+[    7.817768] EXT4-fs (sdc1): re-mounted. Opts: errors=remount-ro,user_xattr
+.RE
+.fi
+.PP
+Append to a bucket by argument:
+.PP
+.nf
+.RS
+$ \fBbucket\fR -a jokes "A plateau is the highest form of flattery."
+$ \fBbucket\fR jokes
+I wondered why the frisbee was getting bigger, and then it hit me
+A plateau is the highest form of flattery. 
+.RE
+.fi
+.PP
+List buckets:
+.PP
+.nf
+.RS
+$ \fBbucket\fR -l
+bucket  errors  jokes
+.RE
+.fi
+.PP
+List buckets verbosely (just the first line of each bucket):
+.PP
+.nf
+.RS
+$ \fBbucket\fR -lv
+bucket: I wondered why the frisbee was getting bigger, and then it hit me
+errors: [    7.817768] EXT4-fs (sdc1): re-mounted. Opts: errors=remount-ro,user_xattr
+jokes: I wondered why the frisbee was getting bigger, and then it hit me
+.RE
+.fi
+.PP
+List buckets completely:
+.PP
+.nf
+.RS
+$ \fBbucket\fR -lV
+bucket:
+I wondered why the frisbee was getting bigger, and then it hit me
+errors: 
+[    7.817768] EXT4-fs (sdc1): re-mounted. Opts: errors=remount-ro,user_xattr
+jokes:
+I wondered why the frisbee was getting bigger, and then it hit me
+A plateau is the highest form of flattery. 
+.RE
+.fi
+.PP
+Grep buckets:
+.PP
+.nf
+.RS
+$ \fBbucket\fR -g frisbee
+bucket:I wondered why the frisbee was getting bigger, and then it hit me
+jokes:I wondered why the frisbee was getting bigger, and then it hit me
+.RE
+.fi
+.PP
+Edit buckets (using =$EDITOR=):
+.PP
+.nf
+.RS
+$ \fBbucket\fR -e
+Waiting for Emacs...
+$ \fBbucket\fR -e jokes
+Waiting for Emacs...
+.RE
+.fi
+.PP
+Empty buckets:
+.PP
+.nf
+.RS
+$ \fBbucket\fR -E
+$ \fBbucket\fR
+$ \fBbucket\fR -E jokes
+$ \fBbucket\fR jokes
+.RE
+.fi
+.PP
+Expire old buckets:
+.PP
+.nf
+.RS
+$ sleep 14d  # Default: 2 weeks
+$ \fBbucket\fR -x
+$ \fBbucket\fR -l
+.RE
+.fi
+.SH CONFIGURATION
+.B
+Empty/expire command
+.RS
+The default command for \fI\-\-empty\fR and \fI\-\-expire\fR is \fItrash-put\fR, part of the \fItrash-cli\fR package,which may not be installed on your system by default.
+\fItrash-cli\fR is a great package, so I recommend installing it.  It uses the standard XDG trash bin from the terminal.
+.PP
+If you prefer, you can easily change the default to \fIrm\fR by changing the \fIdeleteCommand\fR variable near the top of the script.  
+.PP
+Or you could change it to something like \fImv -t ~/.local/share/Trash/files\fR, although that might cause the trashed files to not show up in GUI trash apps, since they would be missing the \fI.trashinfo\fR files.
+.PP
+.RE
+.B
+Storage directory
+.RS
+The default directory for bucket storage is \fI~/.cache/bucket\fR.
+\fI~/.cache\fR is probably excluded by most backup programs (it should be), so this seems like a good place for buckets, since buckets are intended to be temporary storage.
+.PP
+However, you can set a custom directory using  the \fI\-\-directory\fR option.
+Unlike the default directory, it will not be created for you if it doesn't exist.
+You might set this option in an alias, that way whenever you use that alias, the buckets would be stored in that directory.
+This could be helpful if you wanted to store a certain set of buckets more permanently, in a place where they would typically be included in backups.
+.SH DEVELOPMENT
+I can't think of much else to add right now.
+But I welcome suggestions and pull requests.
+Bug reports may be kept to yourself (just kidding).
+.PP
+\fBbucket\fR's home is at \fIhttps://github.com/alphapapa/bucket\fR.
+.SH LICENSE
+I really don't think a license is necessary for something this straightfoward.
+But consider it GPL'ed.

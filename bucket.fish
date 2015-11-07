@@ -231,7 +231,7 @@ else if isset expire
     # *** Expire buckets
     debug "Expiring buckets"
     
-    find $dir -type f -mtime $expireDays -exec $deleteCommand $verbose '{}' +
+    find $dir -type f -mtime +$expireDays -exec $deleteCommand $verbose '{}' +
 
 else
     if begin; not isset stdin; and not isset data; end
