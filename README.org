@@ -154,17 +154,17 @@ or BUCKET if given.  The second form reads DATA and/or BUCKET from
 arguments, writing to a bucket or printing a bucket's contents.
 
 Options:
-    -a, --append   Append to bucket
-    -d, --date     Sort by date
-    -e, --edit     Edit bucket
-    -E, --empty    Empty bucket
-    -g, --grep     Grep in buckets
-    -h, --help     I can haz cheezburger?
-    -l, --list     List buckets
-    -v, --verbose  Verbose output
-    -V, --VERBOSE  VERY verbose output
-    -x, --expire   eXpire old buckets (default: +14 days)
-    --directory    Bucket storage directory
+    -a, --append                Append to bucket
+    -d, --date                  Sort by date
+    -e, --edit                  Edit bucket
+    -E, --empty                 Empty bucket
+    -g PATTERN, --grep PATTERN  Grep in buckets
+    -h, --help                  i can Haz cheezburger?
+    -l, --list                  List buckets
+    -v, --verbose               Verbose output
+    -V, --VERBOSE               VERY verbose output
+    -x, --expire                eXpire old buckets (default: +14 days)
+    --directory DIRECTORY       Bucket storage directory
 #+END_SRC
 
 ** Installation
@@ -182,6 +182,7 @@ Or, you can install it manually, e.g. into your homedir:
 + =bucket.sh= or =bucket.fish= should go into a directory in your =PATH=.  You will probably want to remove the extension or symlink it to make it easier to type.
 + =completions/bucket.fish= can be put in =~/.config/fish/completions=, and then Fish will provide =TAB= auto-completion for options and bucket names.
 + =getopts.fish= should be put in =~/.config/fish/functions= if you are using =bucket.fish=.
++ =bucket.1= should go in =~/.local/share/man/man1=.
 
 *** Uninstallation
 If you installed with ~make install~, you can uninstall =bucket= (*D:*) with ~sudo make uninstall~.
@@ -194,7 +195,7 @@ If you installed with ~make install~, you can uninstall =bucket= (*D:*) with ~su
 + =Makefile= is how we make the donuts.
 
 ** Configuration
-+ *Empty/expire command*
++ *Empty/expire commands*
     - The default command for =empty= and =expire= is =trash-put=, part of the =trash-cli= package,which may not be installed on your system by default.  =trash-cli= is a great package, so I recommend installing it.  It uses the standard XDG trash bin from the terminal.
     - If you prefer, you can easily change the default to =rm= by changing the =deleteCommand= variable near the top of the script.  
     - Or you could change it to something like ~mv -t ~/.local/share/Trash/files~, although that might cause the trashed files to not show up in GUI trash apps, since they would be missing the ~.trashinfo~ files.

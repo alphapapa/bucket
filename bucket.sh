@@ -32,17 +32,17 @@ arguments, writing to a bucket or printing a bucket's contents."
 
     echo
     echo "Options:"
-    echo "    -a, --append   Append to bucket"
-    echo "    -d, --date     Sort by date"
-    echo "    -e, --edit     Edit bucket"
-    echo "    -E, --empty    Empty bucket"
-    echo "    -g, --grep     Grep in buckets"
-    echo "    -h, --help     I can haz cheezburger?"
-    echo "    -l, --list     List buckets"
-    echo "    -v, --verbose  Verbose output"
-    echo "    -V, --VERBOSE  VERY verbose output"
-    echo "    -x, --expire   eXpire old buckets (default: +$expireDays days)"
-    echo "    --directory    Bucket storage directory"
+    echo "    -a, --append                Append to bucket"
+    echo "    -d, --date                  Sort by date"
+    echo "    -e, --edit                  Edit bucket"
+    echo "    -E, --empty                 Empty bucket"
+    echo "    -g PATTERN, --grep PATTERN  Grep in buckets"
+    echo "    -h, --help                  i can Haz cheezburger?"
+    echo "    -l, --list                  List buckets"
+    echo "    -v, --verbose               Verbose output"
+    echo "    -V, --VERBOSE               VERY verbose output"
+    echo "    -x, --expire                eXpire old buckets (default: +$expireDays days)"
+    echo "    --directory DIRECTORY       Bucket storage directory"
 }
 
 

@@ -25,11 +25,11 @@ Edit bucket
 \fB\-E\fR, \fB\-\-empty\fR
 Empty bucket
 .TP
-\fB\-g\fR, \fB\-\-grep\fR
+\fB\-g\fR \fIPATTERN\fR, \fB\-\-grep\fR \fIPATTERN\fR
 Grep in buckets
 .TP
 \fB\-h\fR, \fB\-\-help\fR
-I can haz cheezburger?
+i can Haz cheezburger?
 .TP
 \fB\-l\fR, \fB\-\-list\fR
 List buckets
@@ -43,7 +43,7 @@ VERY verbose output
 \fB\-x\fR, \fB\-\-expire\fR
 eXpire old buckets (default: +14 days)
 .TP
-\fB\-\-directory\fR
+\fB\-\-directory\fR \fIDIRECTORY\fR
 Bucket storage directory
 .SH EXAMPLES
 Pour into default bucket by argument:
@@ -145,7 +145,7 @@ jokes:I wondered why the frisbee was getting bigger, and then it hit me
 .RE
 .fi
 .PP
-Edit buckets (using =$EDITOR=):
+Edit buckets (using \fI$EDITOR\fR):
 .PP
 .nf
 .RS
@@ -178,7 +178,7 @@ $ \fBbucket\fR -l
 .fi
 .SH CONFIGURATION
 .B
-Empty/expire command
+Empty/expire commands
 .RS
 The default command for \fI\-\-empty\fR and \fI\-\-expire\fR is \fItrash-put\fR, part of the \fItrash-cli\fR package,which may not be installed on your system by default.
 \fItrash-cli\fR is a great package, so I recommend installing it.  It uses the standard XDG trash bin from the terminal.
@@ -198,6 +198,8 @@ However, you can set a custom directory using  the \fI\-\-directory\fR option.
 Unlike the default directory, it will not be created for you if it doesn't exist.
 You might set this option in an alias, that way whenever you use that alias, the buckets would be stored in that directory.
 This could be helpful if you wanted to store a certain set of buckets more permanently, in a place where they would typically be included in backups.
+.SH SEE ALSO
+For more amusing info, see the readme file at \fI/usr/{local,}/share/doc/bucket/README.org\fR
 .SH DEVELOPMENT
 I can't think of much else to add right now.
 But I welcome suggestions and pull requests.
