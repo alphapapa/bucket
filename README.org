@@ -38,7 +38,7 @@ Append to a bucket by argument:
 $ bucket -a jokes "A plateau is the highest form of flattery."
 $ bucket jokes
 I wondered why the frisbee was getting bigger, and then it hit me
-A plateau is the highest form of flattery. 
+A plateau is the highest form of flattery.
 #+END_SRC
 
 List buckets:
@@ -61,12 +61,12 @@ $ bucket -lV
 bucket:
 I wondered why the frisbee was getting bigger, and then it hit me
 
-errors: 
+errors:
 [    7.817768] EXT4-fs (sdc1): re-mounted. Opts: errors=remount-ro,user_xattr
 
 jokes:
 I wondered why the frisbee was getting bigger, and then it hit me
-A plateau is the highest form of flattery. 
+A plateau is the highest form of flattery.
 #+END_SRC
 
 Grep buckets:
@@ -194,9 +194,9 @@ If you installed with ~make install~, you can uninstall =bucket= (*D:*) with ~su
 + =Makefile= is how we make the donuts.
 
 ** Configuration
-+ *Empty/expire command*
++ *Empty command*
     - The default command for =empty= and =expire= is =trash-put=, part of the =trash-cli= package,which may not be installed on your system by default.  =trash-cli= is a great package, so I recommend installing it.  It uses the standard XDG trash bin from the terminal.
-    - If you prefer, you can easily change the default to =rm= by changing the =deleteCommand= variable near the top of the script.  
+    - If you prefer, you can easily change the default to =rm= by changing the =deleteCommand= variable near the top of the script.
     - Or you could change it to something like ~mv -t ~/.local/share/Trash/files~, although that might cause the trashed files to not show up in GUI trash apps, since they would be missing the ~.trashinfo~ files.
 + *Storage directory*
     - The default directory for bucket storage is =~/.cache/bucket=.  =~/.cache= is probably excluded by most backup programs (it should be), so this seems like a good place for buckets, since buckets are intended to be temporary storage.
@@ -261,14 +261,11 @@ $ log -lV
 21:12 Just as I suspected, I caught him ordering tartar sauce online.  He'll be eating nothing but cheezburgers from now on.
 #+END_SRC
 
-*Note:* ~bucket.sh~ handles arguments slightly differently than ~bucket.fish~.  The Bash version allows specifying options and arguments in any order, while the Fish version treats all options after the first non-option argument as non-option arguments.  This means that the Bash version allows a command like ~bucket.sh --directory ~/.log --append Monday 13:37 -l -V~, and the ~-l -V~ would cause the script to list buckets verbosely; but the same command using ~bucket.fish~ would append the string ~13:37 -l -V~ to the ~Monday~ bucket.  So if you use the Fish version and want to use an alias like this, you'll need to use a separate alias for listing, like:
-
-#+BEGIN_SRC sh
-alias logV 'bucket.fish --directory ~/.log -lV'
-#+END_SRC
+*Note:* ~bucket.sh~ handles arguments slightly differently than ~bucket.fish~.  The Bash version allows specifying options and arguments in any order, while the Fish version treats all options after the first non-option argument as non-option arguments.  This means that the Bash version allows a command like ~bucket.sh --directory ~/.log --append Monday 13:37 -l -V~, and the ~-l -V~ would cause the script to list buckets verbosely; but the same command using ~bucket.fish~ would append the string ~13:37 -l -V~ to the ~Monday~ bucket.  So if you use the Fish version and want to use an alias like this, you'll need to use a separate alias for listing, like ~alias logV 'bucket.fish --directory ~/.log -lV~.
+>>>>>>> 4c79aed85b07a993b57536398243611dc9b2e930
 
 ** Development
 I can't think of much else to add right now.  But I welcome suggestions and pull requests.  Bug reports may be kept to yourself (just kidding).
 
 ** License
-I really don't think a license is necessary for something this straightfoward.  But consider it GPL'ed.
+GPLv3
